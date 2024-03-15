@@ -1,42 +1,30 @@
 <script setup>
-    import { ClockIcon, ListBulletIcon, ChartBarIcon } from '@heroicons/vue/24/outline'
-
+    import { NAV_ITEMS } from '../constants';
     import NavItem from './NavItem.vue';
+    import { isPageValid } from '../validators';
 
-    import { ref } from 'vue';
-
-    import { PAGE_TIMELINE, PAGE_ACTIVITIES, PAGE_PROGRESS } from '../constants'
-
-    const navItems = {
-        [PAGE_TIMELINE]: ClockIcon,
-        [PAGE_ACTIVITIES]: ListBulletIcon,
-        [PAGE_PROGRESS]: ChartBarIcon
-    }
-
-    const currentPage = ref(normalizePageHash()); // делаем переменную реактивной, чтобы перерендерить компонент при ее изменении
-
-    function normalizePageHash() {
-        const hash = window.location.hash.slice(1);
-
-        if (Object.keys(navItems).includes(hash)) {
-            return hash;
+    defineProps({
+        currentPage: {
+            required: true,
+            type: String,
+            validator: isPageValid
         }
+    });
 
-        window.location.hash = PAGE_TIMELINE;
-
-        return PAGE_TIMELINE;
-    }
+    const emit = defineEmits({
+        navigate: isPageValid
+    });
 
 </script>
 
 <template>
     <nav class="sticky bottom-0 bg-white">
         <ul class="flex items-center justify-around border-t">
-            <NavItem v-for="(icon, page) in navItems" 
+            <NavItem v-for="(icon, page) in NAV_ITEMS" 
                 :key = "page" 
                 :href="`#${page}`" 
                 :class="{'bg-gray-200 pointer-events-none': currentPage === page}"
-                @click="currentPage=page"
+                @click="emit('navigate', page)"
             > 
             <!-- при передаче аттрибута class значение добавится, если внутри NavItem элемент уже содержит аттрибут class-->
             <!-- v-on вешаем слушатель на клик по ссылке. поменяется currentPage и class обновится-->
