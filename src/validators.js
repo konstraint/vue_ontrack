@@ -40,7 +40,7 @@ export function isUndefined(value) {
     return value === undefined
 }
 
-function isNumber(value) {
+export function isNumber(value) {
     return typeof value === 'number'
 }
 
@@ -61,6 +61,10 @@ export function isNotEmptyString(value) {
 }
 
 export function isActivityValid({id, name, secondsToComplete}) {
+    if (isNull(id)) {
+        return true;
+    }
+
     return [
         isNotEmptyString(id),
         isNotEmptyString(name),

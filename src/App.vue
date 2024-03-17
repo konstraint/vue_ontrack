@@ -19,18 +19,31 @@ function goTo(page) {
   currentPage.value = page;
 }
 
-const timelineItems = generateTimelineItems();
+const timelineItems = ref(generateTimelineItems());
 
 const activities = ref(generateActivities());
 
 const activitySelectOptions = computed(() => generateActivitySelectOptions(activities.value));
 
 function deleteActivity(activity) {
+  timelineItems.value.forEach((timelineItem) => {
+    if (timelineItem.activityId === activity.id) {
+      timelineItem.activityId = null;
+    }
+  });
   activities.value.splice(activities.value.indexOf(activity), 1)
 }
 
 function createActivity(activity) {
   activities.value.push(activity);
+}
+
+function setTimelineItemActivity(timelineItem, activity) {
+    timelineItem.activityId = activity.id
+}
+
+function setActivitySecondsToComplete(activity, secondsToComplete) {
+  activity.secondsToComplete = secondsToComplete
 }
 
 </script>
@@ -43,12 +56,15 @@ function createActivity(activity) {
       v-show="currentPage === PAGE_TIMELINE"
       :timeline-items="timelineItems" 
       :activity-select-options="activitySelectOptions"
+      :activities="activities"
+      @set-timeline-item-activity="setTimelineItemActivity"
     />
     <TheActivities 
       v-show="currentPage === PAGE_ACTIVITIES" 
       :activities="activities" 
       @delete-activity="deleteActivity"
       @create-activity="createActivity"
+      @set-activity-seconds-to-complete="setActivitySecondsToComplete"
       />
     <TheProgress v-show="currentPage === PAGE_PROGRESS" />
     <!-- v-show туглит свойство display, а v-if - вообще не рендерит элемент если значение false -->

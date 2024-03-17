@@ -1,10 +1,15 @@
 <script setup>
     import BaseSelect from './BaseSelect.vue';
     import TimelineHour from './TimelineHour.vue';
-    import { isTimelineItemValid, validateSelectOptions } from '../validators';
-    import { ref } from 'vue';
+    import { 
+        isActivityValid,
+        isTimelineItemValid, 
+        validateActivities, 
+        validateSelectOptions 
+    } from '../validators';
+    import { NULLABLE_ACTIVITY } from '../constants';
 
-    defineProps({
+    const props = defineProps({
         timelineItem: {
             required: true,
             type: Object,
@@ -14,10 +19,28 @@
             required: true,
             type: Array,
             validator: validateSelectOptions
+        },
+        activities: {
+            required: true,
+            type: Array,
+            validator: validateActivities
         }
     });
 
-    const selectedActivityId = ref(null);
+    const emit = defineEmits({
+        selectActivity: isActivityValid
+    });
+
+    function selectActivity(id) {
+        emit('selectActivity',
+            findActivityById(id)
+        );
+    }
+
+    function findActivityById(id) {
+        return props.activities.find((activity) => activity.id === id) || NULLABLE_ACTIVITY
+    }
+
 </script>
 
 <template>
@@ -28,7 +51,7 @@
             placeholder="Rest"
             :selected="timelineItem.activityId" 
             :options="activitySelectOptions" 
-            @select="selectedActivityId = $event"
+            @select="selectActivity"
         />
 
     </li>
