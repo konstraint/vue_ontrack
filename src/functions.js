@@ -1,10 +1,10 @@
 import {
     HOURS_IN_DAY,
     PAGE_TIMELINE,
-    MIDNIGHT_HOUR,
     SECONDS_IN_HOUR,
     SECONDS_IN_MINUTE,
-    MINUTES_IN_HOUR
+    MINUTES_IN_HOUR,
+    MILLISECONDS_IN_SECOND
 } from './constants'
 import { isNull, isPageValid } from './validators'
 
@@ -32,15 +32,12 @@ export function id() {
     return Date.now().toString(36) + Math.random().toString(36).substring(2)
 }
 
-export function generateTimelineItems() {
-    const timelineItems = []
-    for (let hour = MIDNIGHT_HOUR; hour < HOURS_IN_DAY; hour++) {
-        timelineItems.push({
-            hour,
-            activityId: null
-        })
-    }
-    return timelineItems
+export function generateTimelineItems(activities) {
+    return [...Array(HOURS_IN_DAY).keys()].map((hour) => ({
+        hour,
+        activityId: hour % 4 === 0 ? null : activities[hour % 2].id,
+        activitySeconds: hour % 4 === 0 ? 0 : (15 * SECONDS_IN_MINUTE * hour) % SECONDS_IN_HOUR,        
+    }))
 }
 
 export function generateActivitySelectOptions(activities) {
@@ -62,4 +59,17 @@ function generatePeriodSelectOptionsLabel(periodInMinutes) {
     const hours = Math.floor(periodInMinutes / MINUTES_IN_HOUR).toString().padStart(2, 0);
     const minutes = (periodInMinutes % MINUTES_IN_HOUR).toString().padStart(2, 0);
     return `${hours}:${minutes}`
+}
+
+export function formatSeconds(seconds) {
+    /*
+    const hours = Math.floor(seconds / SECONDS_IN_HOUR).toString().padStart(2, 0);
+    const minutes = Math.floor(seconds % SECONDS_IN_HOUR / SECONDS_IN_MINUTE).toString().padStart(2, 0);
+    const second = Math.floor(seconds % SECONDS_IN_MINUTE).toString().padStart(2, 0);
+    return `${hours}:${minutes}:${second}`
+    */
+    const date = new Date();
+    date.setTime(Math.abs(seconds) * MILLISECONDS_IN_SECOND);
+    const utc = date.toUTCString();
+    return utc.substring(utc.indexOf(':') - 2, utc.indexOf(':') + 6)
 }

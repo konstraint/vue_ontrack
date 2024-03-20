@@ -15,13 +15,23 @@ import {
 
 const currentPage = ref(normalizePageHash()); // делаем переменную реактивной, чтобы перерендерить компонент при ее изменении
 
+const timeline = ref();
+
 function goTo(page) {
+  if (currentPage.value === PAGE_TIMELINE && page === PAGE_TIMELINE) {
+    timeline.value.scrollToHour();
+  }
+
+  if (page !== PAGE_TIMELINE) {
+    document.body.scrollIntoView();
+  }
+
   currentPage.value = page;
 }
 
-const timelineItems = ref(generateTimelineItems());
-
 const activities = ref(generateActivities());
+
+const timelineItems = ref(generateTimelineItems(activities.value));
 
 const activitySelectOptions = computed(() => generateActivitySelectOptions(activities.value));
 
@@ -29,6 +39,7 @@ function deleteActivity(activity) {
   timelineItems.value.forEach((timelineItem) => {
     if (timelineItem.activityId === activity.id) {
       timelineItem.activityId = null;
+      timelineItem.activitySeconds = 0;
     }
   });
   activities.value.splice(activities.value.indexOf(activity), 1)
@@ -57,6 +68,8 @@ function setActivitySecondsToComplete(activity, secondsToComplete) {
       :timeline-items="timelineItems" 
       :activity-select-options="activitySelectOptions"
       :activities="activities"
+      :current-page="currentPage"
+      ref="timeline"
       @set-timeline-item-activity="setTimelineItemActivity"
     />
     <TheActivities 
