@@ -14,6 +14,7 @@
     import { computed } from 'vue';
     import { isNavItemValid } from '../validators';
     import { navigate, currentPage } from '../router';
+    import BaseIcon from './BaseIcon.vue';
 
     const props = defineProps({
         navItem: {
@@ -36,7 +37,7 @@
         <!-- при передаче аттрибута class значение добавится, если внутри NavItem элемент уже содержит аттрибут class-->
         <!-- v-on вешаем слушатель на клик по ссылке. поменяется currentPage и class обновится-->            
         <a :href="`#${navItem.page}`" @click="navigate(navItem.page)" :class="classes">
-            <component :is="navItem.icon" class="h-6 w-6" />
+            <BaseIcon :name="navItem.icon" classes="h-6 w-6" />
             {{ navItem.page }}
         </a>
     </li>

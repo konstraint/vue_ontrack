@@ -1,13 +1,11 @@
 <script setup>
-    import { nextTick, watchPostEffect } from 'vue';
-    import { PAGE_TIMELINE } from '../constants';
-    import { currentPage } from '../router';
+    import { onActivated } from 'vue';
     import { scrollToHour, scrollToCurrentHour, timelineItems, timelineItemRefs } from '../timeline-items';    
     import TimelineItem from '../components/TimelineItem.vue';
 
     //defineExpose({scrollToHour});  // предоставляем доступ к функции scrollToHour компоненту-родителю
 
-    // дожидается когда все компоненты отрендерятся
+    /* дожидается когда все компоненты отрендерятся
     watchPostEffect(async () => {
         //debugger;
         // когда переходим с другой страницы на страницу с таймерами, то делаем, чтобы переход к текущему часу был мгновенным
@@ -20,6 +18,16 @@
             //debugger
         }
     });
+    */
+
+    /* отрабатывает, когда компонент становится активным, т.к. теперь он динамический и рендерится по условию
+    поэтому watchPostEffect больше не нужен - т.е. когда перейдем на страницу с таймерами, 
+    то понятно, что надо скролить без анимации к текущему часу
+    кроме того нужно было ждать формирование dom и рендеринг, а теперь мы точно понимаем, что перешли на страницу с таймерами
+    с другой страницы
+    */
+    
+    onActivated(scrollToCurrentHour)
 
 </script>
 

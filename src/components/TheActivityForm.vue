@@ -1,9 +1,10 @@
 <script setup>
     import { nextTick, ref } from 'vue';
-    import { PlusIcon } from '@heroicons/vue/24/outline';
     import { id } from '../functions';
-    import { createActivity } from '@/activities';
+    import { createActivity } from '../activities';
+    import { ICON_PLUS } from '../icons';
     import BaseButton from './BaseButton.vue';
+    import BaseIcon from './BaseIcon.vue';
 
     // через v-model обеспечим синхронизацию поля ввода и переменной (чтоб не прослушивать oninput и не менять value)
     // и сделаем переменную реактивной, чтобы Vue перерендерил форму после submit, где меняется эта переменная
@@ -37,7 +38,7 @@
             v-model="name"
         >
         <BaseButton :disabled="name.trim().length === 0">
-            <PlusIcon class="h-8"/>
+            <BaseIcon :name="ICON_PLUS" />
         </BaseButton>
     </form>
 </template>
