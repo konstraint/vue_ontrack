@@ -2,7 +2,7 @@
     import { TrashIcon } from '@heroicons/vue/24/outline';
     import { BUTTON_TYPE_DANGER, PERIOD_SELECT_OPTIONS } from '../constants';
     import { isActivityValid } from '../validators';
-    import { deleteActivity, setActivitySecondsToComplete } from '../activities';      
+    import { deleteActivity, updateActivity } from '../activities';      
     import { resetTimelineItemActivities } from '../timeline-items';
     import ActivitySecondsToComplete from './ActivitySecondsToComplete.vue';
     import BaseButton from './BaseButton.vue';
@@ -37,7 +37,7 @@
                 placeholder="hh:mm" 
                 :selected="activity.secondsToComplete || null" 
                 :options="PERIOD_SELECT_OPTIONS"
-                @select="setActivitySecondsToComplete(activity, $event);"
+                @select="updateActivity(activity, { secondsToComplete: $event || 0 });"
             />
 
             <ActivitySecondsToComplete 

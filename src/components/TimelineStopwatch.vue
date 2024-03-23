@@ -10,7 +10,7 @@
     } from '../constants';
     import { isTimelineItemValid } from '../validators';
     import { currentHour, formatSeconds } from '../functions';
-    import { updateTimelineActivitySeconds } from '@/timeline-items';
+    import { updateTimelineItem } from '@/timeline-items';
     import BaseButton from './BaseButton.vue';
 
     // достаем по ключу функцию из родительского компонента, к которой хотим получить доступ
@@ -28,7 +28,7 @@
     watch(
         () => props.timelineItem.activityId, // смотрим меняется ли кол-секунд
         () => {
-            updateTimelineActivitySeconds(props.timelineItem, seconds.value)
+            updateTimelineItem(props.timelineItem, { activitySeconds: seconds.value })
         }
     )
 
@@ -38,7 +38,7 @@
 
     function start() { // запуск секундомера
         isRunning.value = setInterval(() => { // каждую секунду нужно обновлять секундомер
-            updateTimelineActivitySeconds(props.timelineItem, props.timelineItem.activitySeconds + 1)
+            updateTimelineItem(props.timelineItem, { activitySeconds: props.timelineItem.activitySeconds + 1 })
             seconds.value++;
         }, MILLISECONDS_IN_SECOND)
     }
@@ -50,9 +50,9 @@
 
     function reset() { // сброс секундомера
         stop();
-        updateTimelineActivitySeconds(
+        updateTimelineItem(
             props.timelineItem,
-            props.timelineItem.activitySeconds - seconds.value
+            { activitySeconds: props.timelineItem.activitySeconds - seconds.value }
         );
         seconds.value = 0;
     }

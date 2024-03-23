@@ -1,35 +1,25 @@
 <script setup>
-    import { nextTick, ref, watchPostEffect } from 'vue';
-    import { MIDNIGHT_HOUR, PAGE_TIMELINE } from '../constants';
+    import { nextTick, watchPostEffect } from 'vue';
+    import { PAGE_TIMELINE } from '../constants';
     import { currentPage } from '../router';
-    import { currentHour } from '../functions';
-    import { timelineItems } from '@/timeline-items';    
+    import { scrollToHour, scrollToCurrentHour, timelineItems, timelineItemRefs } from '../timeline-items';    
     import TimelineItem from '../components/TimelineItem.vue';
 
-    defineExpose({  // предоставляем доступ к функции scrollToHour компоненту-родителю
-        scrollToHour
-    });
-
-    const timelineItemRefs = ref([]); // массив ссылок на компоненты TimelineItem
+    //defineExpose({scrollToHour});  // предоставляем доступ к функции scrollToHour компоненту-родителю
 
     // дожидается когда все компоненты отрендерятся
     watchPostEffect(async () => {
         //debugger;
+        // когда переходим с другой страницы на страницу с таймерами, то делаем, чтобы переход к текущему часу был мгновенным
         if (currentPage.value === PAGE_TIMELINE) {
             
             await nextTick()
 
             //debugger
-            scrollToHour(null, false);
+            scrollToCurrentHour(false);
             //debugger
         }
     });
-
-    function scrollToHour(hour = null, isSmooth = true) {
-        hour ??= currentHour();
-        const el = hour === MIDNIGHT_HOUR ? document.body : timelineItemRefs.value[hour - 1].$el;
-        el.scrollIntoView({ behavior: isSmooth ? "smooth" : 'instant' });
-    }
 
 </script>
 

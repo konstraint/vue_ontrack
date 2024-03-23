@@ -1,6 +1,6 @@
 <script setup>
 import { PAGE_ACTIVITIES, PAGE_PROGRESS, PAGE_TIMELINE } from './constants';
-import { timelineRef, currentPage } from './router';
+import { currentPage } from './router';
 import TheHeader from './components/TheHeader.vue'
 import TheNav from './components/TheNav.vue';
 import TheTimeline from './pages/TheTimeline.vue'
@@ -38,7 +38,7 @@ provide(keys.deleteActivityKey, (activity) => {
   <TheHeader />
 
   <main class="flex flex-grow flex-col">
-    <TheTimeline v-show="currentPage === PAGE_TIMELINE" ref="timelineRef" />
+    <TheTimeline v-show="currentPage === PAGE_TIMELINE" />
     <TheActivities v-show="currentPage === PAGE_ACTIVITIES" />
     <TheProgress v-show="currentPage === PAGE_PROGRESS" />
     <!-- v-show туглит свойство display, а v-if - вообще не рендерит элемент если значение false -->
