@@ -1,15 +1,8 @@
 <script setup>
     import { nextTick, ref, watchPostEffect } from 'vue';
-    import TheTimelineItem from '../components/TimelineItem.vue';
-    import {
-        validateTimelineItems,
-        validateSelectOptions,
-        validateActivities,
-        isTimelineItemValid,
-        isActivityValid,
-        isPageValid,
-    } from '../validators';
-    import { MIDNIGHT_HOUR, PAGE_TIMELINE } from '@/constants';
+    import { validateTimelineItems, isPageValid } from '../validators';
+    import { MIDNIGHT_HOUR, PAGE_TIMELINE } from '../constants';
+    import TimelineItem from '../components/TimelineItem.vue';
 
     const props = defineProps({
         timelineItems: {
@@ -17,29 +10,10 @@
             type: Array,
             validator: validateTimelineItems
         },
-        activitySelectOptions: {
-            required: true,
-            type: Array,
-            validator: validateSelectOptions
-        },
-        activities: {
-            required: true,
-            type: Array,
-            validator: validateActivities
-        },
         currentPage: {
             required: true,
             type: String,
             validator: isPageValid
-        }
-    });
-
-    const emit = defineEmits({
-        setTimelineItemActivity(timelineItem, activity) {
-            return [
-                isTimelineItemValid(timelineItem),
-                isActivityValid(activity),
-            ].every(Boolean)
         }
     });
 
@@ -78,15 +52,12 @@
 <template>
     <div class="mt-7">
         <ul>
-            <TheTimelineItem 
+            <TimelineItem 
                 v-for="timelineItem in timelineItems" 
                 :key="timelineItem.hour" 
                 :timeline-item="timelineItem"
-                :activity-select-options="activitySelectOptions"
-                :activities="activities"
                 ref="timelineItemRefs"
                 @scroll-to-hour="scrollToHour"
-                @select-activity="emit('setTimelineItemActivity', timelineItem, $event)" 
             />
         </ul>
     </div>

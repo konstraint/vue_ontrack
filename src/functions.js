@@ -35,12 +35,15 @@ export function id() {
 export function generateTimelineItems(activities) {
     return [...Array(HOURS_IN_DAY).keys()].map((hour) => ({
         hour,
-        activityId: hour % 4 === 0 ? null : activities[hour % 2].id,
-        activitySeconds: hour % 4 === 0 ? 0 : (15 * SECONDS_IN_MINUTE * hour) % SECONDS_IN_HOUR,        
+        activityId: [0, 1, 2, 3, 4].includes(hour) ? activities[hour % 3].id : null,
+        activitySeconds: [0, 1, 2, 3, 4].includes(hour) ? hour * 600 : 0,        
+        //activityId: hour % 4 === 0 ? null : activities[hour % 2].id,
+        //activitySeconds: hour % 4 === 0 ? 0 : (15 * SECONDS_IN_MINUTE * hour) % SECONDS_IN_HOUR,        
     }))
 }
 
 export function generateActivitySelectOptions(activities) {
+    console.log(activities);
     return activities.map((activity) => ({ value: activity.id, label: activity.name }))
 }
 
@@ -48,7 +51,10 @@ export function normalizeSelectValue(value) {
     return isNull(value) || isNaN(value) ? value : +value
 }
 
-export function generatePeriodSelectOptions(periodsInMinutes) {
+export function generatePeriodSelectOptions() {
+    const periodsInMinutes = [
+        15, 30, 45, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360, 390, 420, 450, 480
+    ];    
     return periodsInMinutes.map((periodInMinutes) => ({
         value: periodInMinutes * SECONDS_IN_MINUTE,
         label: generatePeriodSelectOptionsLabel(periodInMinutes)
@@ -72,4 +78,12 @@ export function formatSeconds(seconds) {
     date.setTime(Math.abs(seconds) * MILLISECONDS_IN_SECOND);
     const utc = date.toUTCString();
     return utc.substring(utc.indexOf(':') - 2, utc.indexOf(':') + 6)
+}
+
+export function getTotalActivitySeconds(activity, timelineItems) {
+    return timelineItems.reduce((prev, timelineItem) => {
+        return timelineItem.activityId === activity.id
+        ? prev + timelineItem.activitySeconds
+        : prev
+    }, 0)
 }

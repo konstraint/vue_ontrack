@@ -1,18 +1,17 @@
 <script setup>
+    import { inject, nextTick, ref } from 'vue';
     import { PlusIcon } from '@heroicons/vue/24/outline';
-    import { isActivityValid } from '../validators';
-    import { nextTick, ref } from 'vue';
-    import { id } from '@/functions';
+    import { id } from '../functions';
     import BaseButton from './BaseButton.vue';
 
-    const emit = defineEmits({
-        submit: isActivityValid,
-    });
+    const createActivity = inject('createActivity');
 
+    // через v-model обеспечим синхронизацию поля ввода и переменной (чтоб не прослушивать oninput и не менять value)
+    // и сделаем переменную реактивной, чтобы Vue перерендерил форму после submit, где меняется эта переменная
     const name = ref('');
 
     async function submit() {
-        emit('submit', {
+        createActivity({
             id: id(),
             name: name.value,
             secondsToComplete: 0

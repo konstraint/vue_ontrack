@@ -8,29 +8,28 @@
         BUTTON_TYPE_WARNING,
         MILLISECONDS_IN_SECOND,
     } from '../constants';
-    import { isHourValid, isNumber } from '../validators';
+    import { isTimelineItemValid } from '../validators';
     import { formatSeconds } from '../functions';
-    import { ref } from 'vue';
+    import { inject, ref } from 'vue';
+
+    // достаем по ключу функцию из родительского компонента, к которой хотим получить доступ
+    const updateTimelineActivitySeconds = inject('updateTimelineActivitySeconds');
 
     const props = defineProps({
-        seconds: {
-            default: 0,
-            type: Number,
-            validator: isNumber
-        },
-        hour: {
+        timelineItem: {
             required: true,
-            type: Number,
-            validator: isHourValid
-        }
+            type: Object,
+            validator: isTimelineItemValid
+        },
     });
 
-    const seconds = ref(props.seconds);  // обновление секундомера
+    const seconds = ref(props.timelineItem.activitySeconds);  // обновление секундомера
     const isRunning = ref(false); // запущен ли секундомер
-    const isStartButtonDisabled = props.hour !== new Date().getHours()
+    const isStartButtonDisabled = props.timelineItem.hour !== new Date().getHours()
 
     function start() { // запуск секундомера
         isRunning.value = setInterval(() => { // каждую секунду нужно обновлять секундомер
+            updateTimelineActivitySeconds(props.timelineItem, 1)
             seconds.value++;
         }, MILLISECONDS_IN_SECOND)
     }
@@ -42,6 +41,7 @@
 
     function reset() { // сброс секундомера
         stop();
+        updateTimelineActivitySeconds(props.timelineItem, -seconds.value)
         seconds.value = 0;
     }
 
