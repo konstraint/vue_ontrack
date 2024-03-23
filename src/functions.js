@@ -1,36 +1,12 @@
 import {
-    HOURS_IN_DAY,
-    SECONDS_IN_HOUR,
     SECONDS_IN_MINUTE,
     MINUTES_IN_HOUR,
     MILLISECONDS_IN_SECOND
 } from './constants'
 import { isNull } from './validators'
 
-export function generateActivities() {
-    return ['Coding', 'Training', 'Reading'].map((name, hour) => ({
-        id: id(),
-        name,
-        secondsToComplete: hour * SECONDS_IN_HOUR
-    }))
-}
-
 export function id() {
     return Date.now().toString(36) + Math.random().toString(36).substring(2)
-}
-
-export function generateTimelineItems(activities) {
-    return [...Array(HOURS_IN_DAY).keys()].map((hour) => ({
-        hour,
-        activityId: [0, 1, 2, 3, 4].includes(hour) ? activities[hour % 3].id : null,
-        activitySeconds: [0, 1, 2, 3, 4].includes(hour) ? hour * 600 : 0,        
-        //activityId: hour % 4 === 0 ? null : activities[hour % 2].id,
-        //activitySeconds: hour % 4 === 0 ? 0 : (15 * SECONDS_IN_MINUTE * hour) % SECONDS_IN_HOUR,        
-    }))
-}
-
-export function generateActivitySelectOptions(activities) {
-    return activities.map((activity) => ({ value: activity.id, label: activity.name }))
 }
 
 export function normalizeSelectValue(value) {
@@ -64,14 +40,6 @@ export function formatSeconds(seconds) {
     date.setTime(Math.abs(seconds) * MILLISECONDS_IN_SECOND);
     const utc = date.toUTCString();
     return utc.substring(utc.indexOf(':') - 2, utc.indexOf(':') + 6)
-}
-
-export function getTotalActivitySeconds(activity, timelineItems) {
-    return timelineItems.reduce((prev, timelineItem) => {
-        return timelineItem.activityId === activity.id
-        ? prev + timelineItem.activitySeconds
-        : prev
-    }, 0)
 }
 
 export function currentHour() {
