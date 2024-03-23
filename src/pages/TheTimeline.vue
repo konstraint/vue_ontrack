@@ -1,20 +1,17 @@
 <script setup>
     import { nextTick, ref, watchPostEffect } from 'vue';
-    import { validateTimelineItems, isPageValid } from '../validators';
+    import { validateTimelineItems } from '../validators';
     import { MIDNIGHT_HOUR, PAGE_TIMELINE } from '../constants';
+    import { currentPage } from '../router';
     import TimelineItem from '../components/TimelineItem.vue';
+    import { currentHour } from '../functions';
 
-    const props = defineProps({
+    defineProps({
         timelineItems: {
             required: true,
             type: Array,
             validator: validateTimelineItems
         },
-        currentPage: {
-            required: true,
-            type: String,
-            validator: isPageValid
-        }
     });
 
     defineExpose({  // предоставляем доступ к функции scrollToHour компоненту-родителю
@@ -26,7 +23,7 @@
     // дожидается когда все компоненты отрендерятся
     watchPostEffect(async () => {
         //debugger;
-        if (props.currentPage === PAGE_TIMELINE) {
+        if (currentPage.value === PAGE_TIMELINE) {
             
             await nextTick()
 
@@ -37,14 +34,9 @@
     });
 
     function scrollToHour(hour = null, isSmooth = true) {
-        const options = { behavior: isSmooth ? "smooth" : 'instant' }
-        hour ??= new Date().getHours();
-        if (hour === MIDNIGHT_HOUR) {
-            document.body.scrollIntoView();
-        } else {
-            timelineItemRefs.value[hour - 1].$el.scrollIntoView(options);
-            //console.log(timelineItemRefs.value[hour - 1].$el);
-        }
+        hour ??= currentHour();
+        const el = hour === MIDNIGHT_HOUR ? document.body : timelineItemRefs.value[hour - 1].$el;
+        el.scrollIntoView({ behavior: isSmooth ? "smooth" : 'instant' });
     }
 
 </script>
@@ -57,7 +49,7 @@
                 :key="timelineItem.hour" 
                 :timeline-item="timelineItem"
                 ref="timelineItemRefs"
-                @scroll-to-hour="scrollToHour"
+                @scroll-to-hour="scrollToHour(timelineItem.hour)"
             />
         </ul>
     </div>

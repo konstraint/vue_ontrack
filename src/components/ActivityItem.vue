@@ -6,20 +6,21 @@
     import BaseButton from './BaseButton.vue';
     import BaseSelect from './BaseSelect.vue';
     import ActivitySecondsToComplete from './ActivitySecondsToComplete.vue';
+    import { deleteActivityKey, periodSelectOptionsKey, setActivitySecondsToCompleteKey } from '../keys';
 
     defineProps({
         activity: {
             type: Object,
             required: true,
             validator: isActivityValid
-        },       
+        },
     });
 
-    const periodSelectOptions = inject('periodSelectOptions');
+    const periodSelectOptions = inject(periodSelectOptionsKey);
 
-    const setActivitySecondsToComplete = inject('setActivitySecondsToComplete');
+    const setActivitySecondsToComplete = inject(setActivitySecondsToCompleteKey);
 
-    const deleteActivity = inject('deleteActivity');
+    const deleteActivity = inject(deleteActivityKey);
 </script>
 
 <template>
@@ -36,7 +37,7 @@
                 placeholder="hh:mm" 
                 :selected="activity.secondsToComplete || null" 
                 :options="periodSelectOptions"
-                @select="setActivitySecondsToComplete(activity, $event || 0);"
+                @select="setActivitySecondsToComplete(activity, $event);"
             />
 
             <ActivitySecondsToComplete 

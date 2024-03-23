@@ -8,12 +8,14 @@
         BUTTON_TYPE_WARNING,
         MILLISECONDS_IN_SECOND,
     } from '../constants';
+    import { updateTimelineActivitySecondsKey } from '../keys';
     import { isTimelineItemValid } from '../validators';
-    import { formatSeconds } from '../functions';
+    import { currentHour, formatSeconds } from '../functions';
     import { inject, ref } from 'vue';
 
     // достаем по ключу функцию из родительского компонента, к которой хотим получить доступ
-    const updateTimelineActivitySeconds = inject('updateTimelineActivitySeconds');
+    //const updateTimelineActivitySeconds = inject('updateTimelineActivitySeconds');
+    const updateTimelineActivitySeconds = inject(updateTimelineActivitySecondsKey);
 
     const props = defineProps({
         timelineItem: {
@@ -25,7 +27,7 @@
 
     const seconds = ref(props.timelineItem.activitySeconds);  // обновление секундомера
     const isRunning = ref(false); // запущен ли секундомер
-    const isStartButtonDisabled = props.timelineItem.hour !== new Date().getHours()
+    const isStartButtonDisabled = props.timelineItem.hour !== currentHour()
 
     function start() { // запуск секундомера
         isRunning.value = setInterval(() => { // каждую секунду нужно обновлять секундомер

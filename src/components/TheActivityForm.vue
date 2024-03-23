@@ -3,8 +3,9 @@
     import { PlusIcon } from '@heroicons/vue/24/outline';
     import { id } from '../functions';
     import BaseButton from './BaseButton.vue';
+    import { createActivityKey } from '../keys';
 
-    const createActivity = inject('createActivity');
+    const createActivity = inject(createActivityKey);
 
     // через v-model обеспечим синхронизацию поля ввода и переменной (чтоб не прослушивать oninput и не менять value)
     // и сделаем переменную реактивной, чтобы Vue перерендерил форму после submit, где меняется эта переменная

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, provide, ref } from 'vue';
+import { computed, provide, readonly, ref } from 'vue';
 import { PAGE_ACTIVITIES, PAGE_PROGRESS, PAGE_TIMELINE } from './constants';
 import { 
   generateActivities,
@@ -7,33 +7,13 @@ import {
   generateActivitySelectOptions,
   generatePeriodSelectOptions
 } from './functions';
-
-import { timelineRef, currentPage, navigate } from './router';
-
+import { timelineRef, currentPage } from './router';
+import * as keys from './keys';
 import TheHeader from './components/TheHeader.vue'
 import TheNav from './components/TheNav.vue';
 import TheTimeline from './pages/TheTimeline.vue'
 import TheActivities from './pages/TheActivities.vue'
 import TheProgress from './pages/TheProgress.vue'
-
-/*
-const currentPage = ref(normalizePageHash()); // делаем переменную реактивной, чтобы перерендерить компонент при ее изменении
-
-function goTo(page) {
-  if (currentPage.value === PAGE_TIMELINE && page === PAGE_TIMELINE) {
-    // через ref-аттрибут дочернего компонента получаем доступ к его функциям 
-    timeline.value.scrollToHour();
-  }
-
-  if (page !== PAGE_TIMELINE) {
-    document.body.scrollIntoView();
-  }
-
-  currentPage.value = page;
-}
-
-const timelineRef = ref();
-*/
 
 const activities = ref(generateActivities());
 
@@ -64,31 +44,32 @@ function updateTimelineActivitySeconds(timelineItem, activitySeconds) {
 }
 
 function setActivitySecondsToComplete(activity, secondsToComplete) {
-  activity.secondsToComplete = secondsToComplete;
+  activity.secondsToComplete = secondsToComplete || 0;
 }
 
-// хотим обеспечить доступ функции updateTimelineActivitySeconds в дочернем компоненте
-// первый параметр - ключ, второй - ссылка на функцию
-provide('updateTimelineActivitySeconds', updateTimelineActivitySeconds);
-provide('timelineItems', timelineItems.value);
-provide('activitySelectOptions', activitySelectOptions.value);
-provide('periodSelectOptions', generatePeriodSelectOptions());
-provide('setTimelineItemActivity', setTimelineItemActivity);
-provide('setActivitySecondsToComplete', setActivitySecondsToComplete);
-provide('createActivity', createActivity);
-provide('deleteActivity', deleteActivity);
+// хотим обеспечить доступ функциям в дочерних компонентах
+// первый параметр - ключ, второй - ссылка на объект(функцию или объекты с данными)
+// readonly - чтобы нельзя было изменять объекты с данными в дочернем компоненте, для функций не надо
+provide(keys.timelineItemsKey, readonly(timelineItems.value));
+provide(keys.activitySelectOptionsKey, readonly(activitySelectOptions.value));
+provide(keys.periodSelectOptionsKey, readonly(generatePeriodSelectOptions()));
+
+provide(keys.updateTimelineActivitySecondsKey, updateTimelineActivitySeconds);
+provide(keys.setTimelineItemActivityKey, setTimelineItemActivity);
+provide(keys.setActivitySecondsToCompleteKey, setActivitySecondsToComplete);
+provide(keys.createActivityKey, createActivity);
+provide(keys.deleteActivityKey, deleteActivity);
 
 </script>
 
 <template>
   <!-- <TheHeader @navigate="goTo($event)" /> -->
-  <TheHeader @navigate="navigate" />
+  <TheHeader />
 
   <main class="flex flex-grow flex-col">
     <TheTimeline 
       v-show="currentPage === PAGE_TIMELINE"
       :timeline-items="timelineItems"
-      :current-page="currentPage"
       ref="timelineRef"
     />
     <TheActivities 
@@ -100,6 +81,6 @@ provide('deleteActivity', deleteActivity);
   </main>
 
   <!-- <TheNav :current-page="currentPage" @navigate="goTo($event)" /> -->
-  <TheNav :current-page="currentPage" @navigate="navigate" />
+  <TheNav />
   <!-- прокидываем кастомный аттрибут (пропс)-->
 </template>

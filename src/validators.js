@@ -1,7 +1,7 @@
 import { NAV_ITEMS, HOURS_IN_DAY, MIDNIGHT_HOUR, BUTTON_TYPES } from "./constants"
 
 export function isPageValid(page) {
-    return !!NAV_ITEMS[page]
+    return NAV_ITEMS.some(navItem => navItem.page === page);
 }
 
 export function isTimelineItemValid({ hour }) {
@@ -78,4 +78,8 @@ export function validateActivities(activities) {
 
 export function isButtonTypeValid(buttonType) {
     return BUTTON_TYPES.includes(buttonType)
+}
+
+export function isNavItemValid(navItem) {
+    return NAV_ITEMS.includes(navItem);
 }

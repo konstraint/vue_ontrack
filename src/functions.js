@@ -1,31 +1,18 @@
 import {
     HOURS_IN_DAY,
-    PAGE_TIMELINE,
     SECONDS_IN_HOUR,
     SECONDS_IN_MINUTE,
     MINUTES_IN_HOUR,
     MILLISECONDS_IN_SECOND
 } from './constants'
-import { isNull, isPageValid } from './validators'
-
-export function normalizePageHash() {
-  const page = window.location.hash.slice(1)
-
-  if (isPageValid(page)) {
-    return page
-  }
-
-  window.location.hash = PAGE_TIMELINE
-
-  return PAGE_TIMELINE
-}
+import { isNull } from './validators'
 
 export function generateActivities() {
-  return ['Coding', 'Training', 'Reading'].map((name, hour) => ({
-    id: id(),
-    name,
-    secondsToComplete: hour * SECONDS_IN_HOUR
-  }))
+    return ['Coding', 'Training', 'Reading'].map((name, hour) => ({
+        id: id(),
+        name,
+        secondsToComplete: hour * SECONDS_IN_HOUR
+    }))
 }
 
 export function id() {
@@ -43,7 +30,6 @@ export function generateTimelineItems(activities) {
 }
 
 export function generateActivitySelectOptions(activities) {
-    console.log(activities);
     return activities.map((activity) => ({ value: activity.id, label: activity.name }))
 }
 
@@ -86,4 +72,8 @@ export function getTotalActivitySeconds(activity, timelineItems) {
         ? prev + timelineItem.activitySeconds
         : prev
     }, 0)
+}
+
+export function currentHour() {
+    return new Date().getHours();
 }
