@@ -1,4 +1,5 @@
 <script setup>
+    import { scrollToHour } from '../timeline-items';
     import { currentHour } from '../functions';
     import { isHourValid } from '../validators';
 
@@ -22,5 +23,7 @@
 </script>
 
 <template>
-    <a href="#" :class="classes">{{ formatedHour }}</a>
+    <a href="#" :class="classes" @click.prevent="scrollToHour(hour)" >
+        {{ formatedHour }}
+    </a>
 </template>

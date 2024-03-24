@@ -1,12 +1,12 @@
 import { computed, ref } from 'vue'
 import { id } from './functions'
-import { SECONDS_IN_HOUR } from './constants'
+import { HUNDRED_PERCENT, SECONDS_IN_HOUR } from './constants'
 
 function generateActivities() {
     return ['Coding', 'Training', 'Reading'].map((name, hour) => ({
         id: id(),
         name,
-        secondsToComplete: hour * SECONDS_IN_HOUR
+        secondsToComplete: 15 * 60 //hour * SECONDS_IN_HOUR
     }))
 }
 
@@ -15,6 +15,10 @@ function generateActivitySelectOptions() {
 }
 
 export const activities = ref(generateActivities())
+
+export const trackedActivities = computed(() =>
+    activities.value.filter(({secondsToComplete}) => secondsToComplete)
+) 
 
 export const activitySelectOptions = computed(() => generateActivitySelectOptions())
 
@@ -28,4 +32,8 @@ export function createActivity(activity) {
 
 export function updateActivity(activity, fields) {
     return Object.assign(activity, fields)
+}
+
+export function calculateActivityCompletionPercentage({ secondsToComplete }, trackedSeconds) {
+    return Math.floor(trackedSeconds * HUNDRED_PERCENT / secondsToComplete)
 }

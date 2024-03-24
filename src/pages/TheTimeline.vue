@@ -1,6 +1,6 @@
 <script setup>
     import { onActivated } from 'vue';
-    import { scrollToHour, scrollToCurrentHour, timelineItems, timelineItemRefs } from '../timeline-items';    
+    import { scrollToCurrentHour, timelineItems, timelineItemRefs } from '../timeline-items';    
     import TimelineItem from '../components/TimelineItem.vue';
 
     //defineExpose({scrollToHour});  // предоставляем доступ к функции scrollToHour компоненту-родителю
@@ -39,7 +39,6 @@
                 :key="timelineItem.hour" 
                 :timeline-item="timelineItem"
                 ref="timelineItemRefs"
-                @scroll-to-hour="scrollToHour(timelineItem.hour)"
             />
         </ul>
     </div>

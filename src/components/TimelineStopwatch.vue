@@ -25,6 +25,8 @@
         },
     });
 
+    const temp = 120;
+
     watch(
         () => props.timelineItem.activityId, // смотрим меняется ли активность для таймера
         () => {
@@ -38,8 +40,10 @@
 
     function start() { // запуск секундомера
         isRunning.value = setInterval(() => { // каждую секунду нужно обновлять секундомер
-            updateTimelineItem(props.timelineItem, { activitySeconds: props.timelineItem.activitySeconds + 1 })
-            seconds.value++;
+            updateTimelineItem(props.timelineItem, { 
+                activitySeconds: props.timelineItem.activitySeconds + temp //1 
+            })
+            seconds.value += temp;
         }, MILLISECONDS_IN_SECOND)
     }
 

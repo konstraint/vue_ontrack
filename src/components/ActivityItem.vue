@@ -2,7 +2,7 @@
     import { BUTTON_TYPE_DANGER, PERIOD_SELECT_OPTIONS } from '../constants';
     import { isActivityValid } from '../validators';
     import { deleteActivity, updateActivity } from '../activities';      
-    import { resetTimelineItemActivities } from '../timeline-items';
+    import { resetTimelineItemActivities, timelineItems } from '../timeline-items';
     import { ICON_TRASH } from '../icons';
     import ActivitySecondsToComplete from './ActivitySecondsToComplete.vue';
     import BaseButton from './BaseButton.vue';
@@ -19,7 +19,7 @@
 
     function deleteAndResetActivity() {
         deleteActivity(props.activity)
-        resetTimelineItemActivities(props.activity)
+        resetTimelineItemActivities(timelineItems.value, props.activity)
     }
 
 </script>
