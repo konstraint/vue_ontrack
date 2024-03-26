@@ -1,5 +1,5 @@
 <script setup>
-    import { watch, watchEffect } from 'vue';
+    import { watchEffect } from 'vue';
     import {
         BUTTON_TYPE_DANGER,
         BUTTON_TYPE_SUCCESS,
@@ -7,11 +7,12 @@
     } from '../constants';
     import { useStopWatch } from '../composables/stopwatch';
     import { isTimelineItemValid } from '../validators';
-    import { currentHour, formatSeconds } from '../functions';
+    import { formatSeconds } from '../functions';
     import { updateTimelineItem } from '../timeline-items';
     import { ICON_ARROW_PATH, ICON_PAUSE, ICON_PLAY } from '../icons';
     import BaseButton from './BaseButton.vue';
     import BaseIcon from './BaseIcon.vue';
+    import { now } from '../time';
 
     // достаем по ключу функцию из родительского компонента, к которой хотим получить доступ
     //const updateTimelineActivitySeconds = inject('updateTimelineActivitySeconds');
@@ -39,6 +40,12 @@
         })
     );
 
+    watchEffect(() => {
+        if (props.timelineItem.hour !== now.value.getHours() && isRunning.value) {
+            stop()
+        }
+    })
+
 </script>
 
 <template>
@@ -52,7 +59,12 @@
         <BaseButton  v-if="isRunning" :type="BUTTON_TYPE_WARNING" @click="stop">
             <BaseIcon :name="ICON_PAUSE" />
         </BaseButton>
-        <BaseButton v-else :type="BUTTON_TYPE_SUCCESS" :disabled="timelineItem.hour !== currentHour()" @click="start">
+        <BaseButton 
+            v-else 
+            :type="BUTTON_TYPE_SUCCESS"
+            :disabled="timelineItem.hour !== now.getHours()"
+            @click="start"
+        >
             <BaseIcon :name="ICON_PLAY" />
         </BaseButton>
     </div>

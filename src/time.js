@@ -1,35 +1,22 @@
-import { computed, ref, watchEffect } from "vue";
-import {
-    HUNDRED_PERCENT,
-    MILLISECONDS_IN_SECOND,
-    SECONDS_IN_DAY,
-    SECONDS_IN_HOUR,
-    SECONDS_IN_MINUTE
-} from "./constants";
+import { computed, ref } from "vue";
+import { HUNDRED_PERCENT, MILLISECONDS_IN_SECOND, SECONDS_IN_DAY } from "./constants";
 
-function calcSecondsSinceMidnight() {
-    const now = new Date();
-    return now.getHours() * SECONDS_IN_HOUR + now.getMinutes() * SECONDS_IN_MINUTE + now.getSeconds()
-}
+export const now = ref(new Date());
 
-const secondsSinceMidnight = ref(calcSecondsSinceMidnight());
+const midnight = computed(() => new Date(now.value).setHours(0, 0, 0, 0));
+
+const secondsSinceMidnight = computed(() => (now.value - midnight.value) / MILLISECONDS_IN_SECOND);
 
 export const secondsSinceMidnigthInPercent = computed(() =>
     secondsSinceMidnight.value * HUNDRED_PERCENT / SECONDS_IN_DAY
-);
-
-watchEffect(() => {
-    if (secondsSinceMidnight.value > SECONDS_IN_DAY) {
-        secondsSinceMidnight.value = 0
-    }
-})    
+);  
 
 let timer = null;
 
 export function startTimer() {
-    secondsSinceMidnight.value = calcSecondsSinceMidnight();
+    now.value = new Date();
     timer = setInterval(() => {
-        secondsSinceMidnight.value++
+        now.value = new Date(now.value.getTime() + MILLISECONDS_IN_SECOND * 300)
     }, MILLISECONDS_IN_SECOND)
 }
 
