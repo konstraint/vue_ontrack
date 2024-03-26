@@ -2,6 +2,7 @@
     import { onActivated } from 'vue';
     import { scrollToCurrentHour, timelineItems, timelineItemRefs } from '../timeline-items';    
     import TimelineItem from '../components/TimelineItem.vue';
+    import TheTimelineIndicator from '../components/TheTimelineIndicator.vue';
 
     //defineExpose({scrollToHour});  // предоставляем доступ к функции scrollToHour компоненту-родителю
 
@@ -32,7 +33,8 @@
 </script>
 
 <template>
-    <div class="mt-7">
+    <div class="relative mt-7">
+        <TheTimelineIndicator />
         <ul>
             <TimelineItem 
                 v-for="timelineItem in timelineItems" 

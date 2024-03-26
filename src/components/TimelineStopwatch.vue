@@ -1,15 +1,15 @@
 <script setup>
-    import { ref, watch } from 'vue';
+    import { watch, watchEffect } from 'vue';
     import {
         BUTTON_TYPE_DANGER,
         BUTTON_TYPE_SUCCESS,
         BUTTON_TYPE_WARNING,
-        MILLISECONDS_IN_SECOND,
     } from '../constants';
+    import { useStopWatch } from '../composables/stopwatch';
     import { isTimelineItemValid } from '../validators';
     import { currentHour, formatSeconds } from '../functions';
     import { updateTimelineItem } from '../timeline-items';
-    import { ICON_ARROW_PATH, ICON_PAUSE, ICON_PLAY } from '@/icons';
+    import { ICON_ARROW_PATH, ICON_PAUSE, ICON_PLAY } from '../icons';
     import BaseButton from './BaseButton.vue';
     import BaseIcon from './BaseIcon.vue';
 
@@ -25,56 +25,34 @@
         },
     });
 
-    const temp = 120;
+    const { start, stop, reset, seconds, isRunning } = useStopWatch(props.timelineItem.activitySeconds);
 
-    watch(
-        () => props.timelineItem.activityId, // смотрим меняется ли активность для таймера
-        () => {
-            updateTimelineItem(props.timelineItem, { activitySeconds: seconds.value })
-        }
-    )
+    // watch(
+    //     () => props.timelineItem.activityId, // смотрим меняется ли активность для таймера
+    //     updateTimelineItemActivitySeconds
+    // );
 
-    const seconds = ref(props.timelineItem.activitySeconds);  // обновление секундомера
-    const isRunning = ref(false); // запущен ли секундомер
-    const isStartButtonDisabled = props.timelineItem.hour !== currentHour()
-
-    function start() { // запуск секундомера
-        isRunning.value = setInterval(() => { // каждую секунду нужно обновлять секундомер
-            updateTimelineItem(props.timelineItem, { 
-                activitySeconds: props.timelineItem.activitySeconds + temp //1 
-            })
-            seconds.value += temp;
-        }, MILLISECONDS_IN_SECOND)
-    }
-
-    function stop() { // остановка секундомера
-        clearInterval(isRunning.value);
-        isRunning.value = false;
-    }    
-
-    function reset() { // сброс секундомера
-        stop();
-        updateTimelineItem(
-            props.timelineItem,
-            { activitySeconds: props.timelineItem.activitySeconds - seconds.value }
-        );
-        seconds.value = 0;
-    }
+    // отслеживает измения всех реактивных переменных использующихся в передаваемом замыкании
+    watchEffect(() => 
+        updateTimelineItem(props.timelineItem, {
+            activitySeconds: seconds.value 
+        })
+    );
 
 </script>
 
 <template>
     <div class="flex w-full gap-2">
-        <BaseButton :type="BUTTON_TYPE_DANGER" :disabled="!seconds" @click="reset">
+        <BaseButton :type="BUTTON_TYPE_DANGER" :disabled="!timelineItem.activitySeconds" @click="reset">
             <BaseIcon :name="ICON_ARROW_PATH" />
         </BaseButton>
         <div class="flex flex-grow items-center rounded bg-gray-100 px-2 font-mono text-3xl">
-            {{ formatSeconds(seconds) }}
+            {{ formatSeconds(timelineItem.activitySeconds) }}
         </div>
         <BaseButton  v-if="isRunning" :type="BUTTON_TYPE_WARNING" @click="stop">
             <BaseIcon :name="ICON_PAUSE" />
         </BaseButton>
-        <BaseButton v-else :type="BUTTON_TYPE_SUCCESS" :disabled="isStartButtonDisabled" @click="start">
+        <BaseButton v-else :type="BUTTON_TYPE_SUCCESS" :disabled="timelineItem.hour !== currentHour()" @click="start">
             <BaseIcon :name="ICON_PLAY" />
         </BaseButton>
     </div>

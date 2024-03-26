@@ -3,7 +3,7 @@ import { id } from './functions'
 import { HUNDRED_PERCENT, SECONDS_IN_HOUR } from './constants'
 
 function generateActivities() {
-    return ['Coding', 'Training', 'Reading'].map((name, hour) => ({
+    return ['Coding', 'Reading', 'Training'].map((name, hour) => ({
         id: id(),
         name,
         secondsToComplete: 15 * 60 //hour * SECONDS_IN_HOUR
@@ -36,4 +36,12 @@ export function updateActivity(activity, fields) {
 
 export function calculateActivityCompletionPercentage({ secondsToComplete }, trackedSeconds) {
     return Math.floor(trackedSeconds * HUNDRED_PERCENT / secondsToComplete)
+}
+
+const totalActivitySecondsToComplete = computed(() => 
+    trackedActivities.value.reduce((totalSeconds, activity) => totalSeconds + activity.secondsToComplete, 0)
+)
+
+export function calculateCompletionPercentage(totalTrackedSeconds) {
+    return Math.floor(totalTrackedSeconds * HUNDRED_PERCENT / totalActivitySecondsToComplete.value)
 }

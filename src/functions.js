@@ -32,13 +32,11 @@ function generatePeriodSelectOptionsLabel(periodInMinutes) {
     return `${hours}:${minutes}`
 }
 
+export function formatSecondsWithSign(seconds) {
+    return `${seconds >= 0 ? '+' : '-'}${formatSeconds(seconds)}`
+}
+
 export function formatSeconds(seconds) {
-    /*
-    const hours = Math.floor(seconds / SECONDS_IN_HOUR).toString().padStart(2, 0);
-    const minutes = Math.floor(seconds % SECONDS_IN_HOUR / SECONDS_IN_MINUTE).toString().padStart(2, 0);
-    const second = Math.floor(seconds % SECONDS_IN_MINUTE).toString().padStart(2, 0);
-    return `${hours}:${minutes}:${second}`
-    */
     const date = new Date();
     date.setTime(Math.abs(seconds) * MILLISECONDS_IN_SECOND);
     const utc = date.toUTCString();
