@@ -12,8 +12,10 @@
 
 <script setup>
     import { computed } from 'vue';
+    import { PAGE_TIMELINE } from '../constants';
     import { isNavItemValid } from '../validators';
     import { navigate, currentPage } from '../router';
+    import { scrollToCurrentHour } from '../timeline-items';
     import BaseIcon from './BaseIcon.vue';
 
     const props = defineProps({
@@ -26,8 +28,14 @@
 
     const classes = computed(() => [
         'flex flex-col items-center p-2 text-xs capitalize',
-        { 'bg-gray-200 pointer-events-none': currentPage.value === props.navItem.page }
+        { 'bg-gray-200': currentPage.value === props.navItem.page }
     ]);
+
+    function handleClick() {
+        currentPage.value === PAGE_TIMELINE && props.navItem.page === PAGE_TIMELINE
+            ? scrollToCurrentHour(true)
+            : navigate(props.navItem.page)      
+    }    
 
 </script>
 
@@ -36,7 +44,7 @@
         <!-- <a v-bind="$attrs" :href="`#${page}`"  @click="navigate(page)" :class="classes"> -->
         <!-- при передаче аттрибута class значение добавится, если внутри NavItem элемент уже содержит аттрибут class-->
         <!-- v-on вешаем слушатель на клик по ссылке. поменяется currentPage и class обновится-->            
-        <a :href="`#${navItem.page}`" @click="navigate(navItem.page)" :class="classes">
+        <a :href="`#${navItem.page}`" @click="handleClick" :class="classes">
             <BaseIcon :name="navItem.icon" class="h-6 w-6" />
             {{ navItem.page }}
         </a>

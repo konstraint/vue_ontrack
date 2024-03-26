@@ -16,7 +16,7 @@ let timer = null;
 export function startTimer() {
     now.value = new Date();
     timer = setInterval(() => {
-        now.value = new Date(now.value.getTime() + MILLISECONDS_IN_SECOND * 300)
+        now.value = new Date(now.value.getTime() + MILLISECONDS_IN_SECOND * 60)
     }, MILLISECONDS_IN_SECOND)
 }
 

@@ -1,6 +1,7 @@
 <script setup>
-    import { onActivated } from 'vue';
-    import { scrollToCurrentHour, timelineItems, timelineItemRefs } from '../timeline-items';    
+    import { onActivated, onDeactivated } from 'vue';
+    import { scrollToCurrentHour, timelineItems, timelineItemRefs } from '../timeline-items';
+    import { startTimer, stopTimer } from '../time';   
     import TimelineItem from '../components/TimelineItem.vue';
     import TheTimelineIndicator from '../components/TheTimelineIndicator.vue';
 
@@ -28,7 +29,12 @@
     с другой страницы
     */
     
-    onActivated(scrollToCurrentHour)
+    onActivated(() => {
+        scrollToCurrentHour()
+        startTimer()
+    });
+
+    onDeactivated(stopTimer);
 
 </script>
 
